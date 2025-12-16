@@ -1,7 +1,7 @@
 {
   "name": "roblox-key-system",
   "version": "1.0.0",
-  "description": "Key system API for Roblox",
+  "description": "Key system API for Roblox with web interface",
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
