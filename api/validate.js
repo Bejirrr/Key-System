@@ -1,38 +1,63 @@
+
+const validKeys = new Map(); // Store: key -> {hwid, username, timestamp}
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  if (req.method === 'GET') {
-    return res.status(200).json({
-      status: 'online',
-      message: 'Use POST method to validate a key',
-      endpoint: '/api/validate',
-      method: 'POST'
-    });
-  }
-  
+  // Only accept POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ valid: false, message: 'Method not allowed' });
   }
-  
-  const { key, hwid } = req.body;
-  
-  if (!key || !hwid) {
-    return res.status(400).json({
-      valid: false,
-      error: 'Missing key or hwid'
+
+  try {
+    const { key, hwid } = req.body;
+
+    // Validasi input
+    if (!key || !hwid) {
+      return res.status(400).json({ 
+        valid: false, 
+        message: 'Missing key or hwid' 
+      });
+    }
+
+
+    const storedKey = validKeys.get(key);
+
+    if (!storedKey) {
+      return res.status(200).json({ 
+        valid: false, 
+        message: 'Key not found' 
+      });
+    }
+
+
+    if (storedKey.hwid !== hwid) {
+      return res.status(200).json({ 
+        valid: false, 
+        message: 'HWID mismatch' 
+      });
+    }
+
+
+    const KEY_EXPIRY = 3600000; // 1 hour in ms
+    if (Date.now() - storedKey.timestamp > KEY_EXPIRY) {
+      validKeys.delete(key); // Hapus key yang expired
+      return res.status(200).json({ 
+        valid: false, 
+        message: 'Key expired' 
+      });
+    }
+
+
+    return res.status(200).json({ 
+      valid: true, 
+      message: 'Key is valid',
+      username: storedKey.username
+    });
+
+  } catch (error) {
+    console.error('Validation error:', error);
+    return res.status(500).json({ 
+      valid: false, 
+      message: 'Internal server error' 
     });
   }
-  
-  // Validation logic (sesuaikan dengan penyimpanan Anda)
-  return res.status(200).json({
-    valid: true,
-    message: 'Key validation endpoint',
-    note: 'Implement your validation logic here'
-  });
 }
