@@ -1,57 +1,50 @@
+import crypto from 'crypto';
+
+const validKeys = new Map();
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Content-Type', 'application/json');
-  
-  const baseUrl = `https://${req.headers.host}`;
-  
-  return res.status(200).json({
-    name: 'Roblox Key System API',
-    version: '1.0.0',
-    status: 'online',
-    endpoints: {
-      getKey: {
-        method: 'POST',
-        url: `${baseUrl}/api/getkey`,
-        description: 'Generate or retrieve a key for a specific HWID',
-        body: {
-          hwid: 'string (required)',
-          player_id: 'number (required)',
-          username: 'string (required)',
-          timestamp: 'number (required)'
-        },
-        response: {
-          success: 'boolean',
-          key: 'string',
-          expires_at: 'ISO date string',
-          message: 'string'
-        }
-      },
-      validate: {
-        method: 'POST',
-        url: `${baseUrl}/api/validate`,
-        description: 'Validate an existing key',
-        body: {
-          key: 'string (required)',
-          hwid: 'string (required)'
-        },
-        response: {
-          valid: 'boolean',
-          expires_at: 'ISO date string (if valid)',
-          error: 'string (if invalid)'
-        }
-      }
-    },
-    features: [
-      'Rate limiting (5 requests per hour per HWID)',
-      'Key expiration (24 hours)',
-      'HWID-based authentication',
-      'Timestamp verification',
-      'CORS enabled'
-    ],
-    rateLimit: {
-      perHwid: 5,
-      window: '1 hour'
-    },
-    keyExpiry: '24 hours'
-  });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, message: 'Method not allowed' });
+  }
+
+  try {
+    const { hwid, username, timestamp } = req.body;
+
+    if (!hwid || !username) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Missing hwid or username' 
+      });
+    }
+
+    // Generate unique key
+    const key = crypto
+      .createHash('sha256')
+      .update(`${hwid}-${username}-${Date.now()}-${Math.random()}`)
+      .digest('hex')
+      .substring(0, 32); // 32 karakter
+
+    // Simpan key dengan info HWID dan user
+    validKeys.set(key, {
+      hwid: hwid,
+      username: username,
+      timestamp: Date.now(),
+      createdAt: new Date().toISOString()
+    });
+
+    console.log(`✅ Key generated for ${username}: ${key}`);
+
+    return res.status(200).json({ 
+      success: true, 
+      key: key,
+      message: 'Key generated successfully'
+    });
+
+  } catch (error) {
+    console.error('Key generation error:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
+    });
+  }
 }
