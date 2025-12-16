@@ -1,9 +1,13 @@
-// Gunakan global storage yang sama
-const validKeys = global.validKeys || new Map();
-global.validKeys = validKeys;
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
 
 export default async function handler(req, res) {
-  // ✅ CORS Headers
+  // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -20,10 +24,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('📥 Validation request:', req.body);
-
     const { key, hwid } = req.body;
 
+    // Validasi input
     if (!key || !hwid) {
       return res.status(400).json({ 
         valid: false, 
@@ -31,55 +34,101 @@ export default async function handler(req, res) {
       });
     }
 
-    // Cek key di storage
-    const storedKey = validKeys.get(key);
+    console.log('📥 Validation request:', { key: key.substring(0, 8) + '...', hwid });
 
-    if (!storedKey) {
-      console.log('❌ Key not found:', key);
-      console.log('📊 Available keys:', Array.from(validKeys.keys()));
+    // Query key from Supabase
+    const { data: keyData, error } = await supabase
+      .from('keys')
+      .select('*')
+      .eq('key', key)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No rows returned (key not found)
+        console.log('❌ Key not found in database');
+        return res.status(200).json({ 
+          valid: false, 
+          message: 'Key not found' 
+        });
+      }
+
+      console.error('❌ Database error:', error);
+      return res.status(500).json({ 
+        valid: false, 
+        message: 'Database error',
+        error: error.message
+      });
+    }
+
+    // Check if key exists
+    if (!keyData) {
+      console.log('❌ Key not found');
       return res.status(200).json({ 
         valid: false, 
         message: 'Key not found' 
       });
     }
 
-    // Cek HWID match
-    if (storedKey.hwid !== hwid) {
-      console.log('❌ HWID mismatch');
+    // Check HWID match
+    if (keyData.hwid !== hwid) {
+      console.log('❌ HWID mismatch:', {
+        expected: keyData.hwid,
+        received: hwid
+      });
       return res.status(200).json({ 
         valid: false, 
-        message: 'HWID mismatch' 
+        message: 'HWID mismatch - This key belongs to another device' 
       });
     }
 
-    // Cek expiry (1 jam)
-    const KEY_EXPIRY = 3600000; // 1 hour in ms
-    const age = Date.now() - storedKey.timestamp;
+    // Check if key expired
+    const now = new Date();
+    const expiresAt = new Date(keyData.expires_at);
     
-    if (age > KEY_EXPIRY) {
-      validKeys.delete(key);
+    if (now > expiresAt) {
       console.log('❌ Key expired');
+      
+      // Optional: Delete expired key
+      await supabase
+        .from('keys')
+        .delete()
+        .eq('key', key);
+
       return res.status(200).json({ 
         valid: false, 
         message: 'Key expired' 
       });
     }
 
+    // Calculate time remaining
+    const timeRemaining = Math.floor((expiresAt - now) / 1000);
+
+    // Update last_validated_at and mark as used
+    await supabase
+      .from('keys')
+      .update({ 
+        last_validated_at: new Date().toISOString(),
+        is_used: true
+      })
+      .eq('key', key);
+
     console.log('✅ Key validated successfully');
 
     return res.status(200).json({ 
       valid: true, 
       message: 'Key is valid',
-      username: storedKey.username,
-      timeRemaining: Math.floor((KEY_EXPIRY - age) / 1000) + 's'
+      username: keyData.username,
+      timeRemaining: `${Math.floor(timeRemaining / 60)} minutes`,
+      expiresAt: keyData.expires_at
     });
 
   } catch (error) {
-    console.error('❌ Validation error:', error);
+    console.error('❌ Server error:', error);
     return res.status(500).json({ 
       valid: false, 
       message: 'Internal server error',
-      error: error.toString()
+      error: error.message
     });
   }
 }
