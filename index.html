@@ -54,6 +54,7 @@
             padding: 2px 8px;
             border-radius: 4px;
             font-size: 0.9em;
+            word-break: break-all;
         }
         .method {
             display: inline-block;
@@ -86,6 +87,19 @@
             margin: 5px 0;
             color: #555;
         }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
     </style>
 </head>
 <body>
@@ -96,13 +110,17 @@
         <div class="endpoint">
             <h3><span class="method">POST</span>/api/getkey</h3>
             <p>Generate atau retrieve key untuk HWID</p>
-            <p style="margin-top: 10px;"><strong>Endpoint:</strong> <code id="getkey-url"></code></p>
+            <p style="margin-top: 10px;"><strong>Endpoint:</strong></p>
+            <code id="getkey-url"></code>
+            <button onclick="copyUrl('getkey-url')">📋 Copy</button>
         </div>
 
         <div class="endpoint">
             <h3><span class="method">POST</span>/api/validate</h3>
             <p>Validasi key yang sudah ada</p>
-            <p style="margin-top: 10px;"><strong>Endpoint:</strong> <code id="validate-url"></code></p>
+            <p style="margin-top: 10px;"><strong>Endpoint:</strong></p>
+            <code id="validate-url"></code>
+            <button onclick="copyUrl('validate-url')">📋 Copy</button>
         </div>
 
         <div class="info">
@@ -118,15 +136,19 @@
 
         <div class="footer">
             <p>Powered by Vercel • Made for Roblox</p>
-            <p style="margin-top: 5px;">Check <a href="/api" style="color: #667eea;">/api</a> for API documentation</p>
         </div>
     </div>
 
     <script>
-        // Auto-populate URLs
         const baseUrl = window.location.origin;
         document.getElementById('getkey-url').textContent = baseUrl + '/api/getkey';
         document.getElementById('validate-url').textContent = baseUrl + '/api/validate';
+        
+        function copyUrl(id) {
+            const text = document.getElementById(id).textContent;
+            navigator.clipboard.writeText(text);
+            alert('URL copied to clipboard!');
+        }
     </script>
 </body>
 </html>
