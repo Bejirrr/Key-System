@@ -29,6 +29,6 @@
     }
   ],
   "env": {
-    "SECRET_KEY": "TESTING"
+    "SECRET_KEY": "testing"
   }
 }
