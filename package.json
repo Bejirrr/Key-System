@@ -1,0 +1,16 @@
+{
+  "name": "roblox-key-system",
+  "version": "1.0.0",
+  "description": "Key system API for Roblox",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "vercel": "latest"
+  }
+}
