@@ -10,18 +10,18 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
         .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
             background: white;
-            padding: 40px;
+            padding: 30px;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 600px;
-            width: 100%;
+            margin-bottom: 20px;
         }
         h1 {
             color: #333;
@@ -37,6 +37,75 @@
             font-size: 0.9em;
             margin-bottom: 20px;
         }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: border 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.error {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+        }
+        .result h3 {
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+        .result.error h3 {
+            color: #ef4444;
+        }
+        .key-display {
+            background: #1f2937;
+            color: #10b981;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
         .endpoint {
             background: #f3f4f6;
             padding: 15px;
@@ -51,10 +120,12 @@
         .endpoint code {
             background: #1f2937;
             color: #10b981;
-            padding: 2px 8px;
+            padding: 8px 12px;
             border-radius: 4px;
-            font-size: 0.9em;
+            font-size: 0.85em;
             word-break: break-all;
+            display: block;
+            margin: 10px 0;
         }
         .method {
             display: inline-block;
@@ -66,18 +137,23 @@
             font-weight: bold;
             margin-right: 10px;
         }
+        .copy-btn {
+            background: #3b82f6;
+            padding: 8px 16px;
+            font-size: 0.85em;
+            margin-top: 5px;
+            width: auto;
+            display: inline-block;
+        }
         .info {
             background: #dbeafe;
             padding: 15px;
             border-radius: 10px;
-            margin-top: 20px;
             border-left: 4px solid #3b82f6;
         }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #666;
-            font-size: 0.9em;
+        .info h3 {
+            margin-bottom: 10px;
+            color: #1e40af;
         }
         ul {
             margin: 10px 0;
@@ -87,53 +163,102 @@
             margin: 5px 0;
             color: #555;
         }
-        button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin-top: 10px;
+        .loader {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
         }
-        button:hover {
-            background: #5568d3;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔑 Roblox Key System API</h1>
-        <span class="status">● Online</span>
+        <div class="card">
+            <h1>🔑 Roblox Key System API</h1>
+            <span class="status">● Online</span>
+            
+            <h2 style="margin: 20px 0 10px 0; color: #333;">🧪 Test Key Generator</h2>
+            <p style="color: #666; margin-bottom: 20px;">Generate key dengan HWID dan player info Anda</p>
+            
+            <form id="keyForm">
+                <div class="form-group">
+                    <label for="hwid">HWID (Hardware ID)</label>
+                    <input type="text" id="hwid" placeholder="Contoh: ABC123XYZ789" required>
+                    <small style="color: #666;">Unique identifier untuk device Anda</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="player_id">Player ID (Roblox)</label>
+                    <input type="number" id="player_id" placeholder="Contoh: 123456789" required>
+                    <small style="color: #666;">ID player Roblox Anda</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username (Roblox)</label>
+                    <input type="text" id="username" placeholder="Contoh: PlayerName123" required>
+                    <small style="color: #666;">Username Roblox Anda</small>
+                </div>
+                
+                <button type="submit" id="submitBtn">
+                    Generate Key 🚀
+                </button>
+            </form>
+            
+            <div id="result" class="result">
+                <h3>✅ Key Generated Successfully!</h3>
+                <div>
+                    <strong>Your Key:</strong>
+                    <div class="key-display" id="keyDisplay"></div>
+                    <button class="copy-btn" onclick="copyKey()">📋 Copy Key</button>
+                </div>
+                <div style="margin-top: 15px;">
+                    <strong>Expires At:</strong> <span id="expiresAt"></span><br>
+                    <strong>HWID:</strong> <span id="hwidDisplay"></span>
+                </div>
+            </div>
+        </div>
         
-        <div class="endpoint">
-            <h3><span class="method">POST</span>/api/getkey</h3>
-            <p>Generate atau retrieve key untuk HWID</p>
-            <p style="margin-top: 10px;"><strong>Endpoint:</strong></p>
-            <code id="getkey-url"></code>
-            <button onclick="copyUrl('getkey-url')">📋 Copy</button>
-        </div>
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: #333;">📡 API Endpoints</h2>
+            
+            <div class="endpoint">
+                <h3><span class="method">POST</span>/api/getkey</h3>
+                <p>Generate atau retrieve key untuk HWID</p>
+                <code id="getkey-url"></code>
+            </div>
 
-        <div class="endpoint">
-            <h3><span class="method">POST</span>/api/validate</h3>
-            <p>Validasi key yang sudah ada</p>
-            <p style="margin-top: 10px;"><strong>Endpoint:</strong></p>
-            <code id="validate-url"></code>
-            <button onclick="copyUrl('validate-url')">📋 Copy</button>
-        </div>
+            <div class="endpoint">
+                <h3><span class="method">POST</span>/api/validate</h3>
+                <p>Validasi key yang sudah ada</p>
+                <code id="validate-url"></code>
+            </div>
 
-        <div class="info">
-            <h3 style="margin-bottom: 10px;">📋 Features:</h3>
-            <ul>
-                <li>✅ Automatic key generation</li>
-                <li>✅ Rate limiting protection</li>
-                <li>✅ 24-hour key expiration</li>
-                <li>✅ HWID-based authentication</li>
-                <li>✅ Replay attack prevention</li>
-            </ul>
+            <div class="info">
+                <h3>📋 Features:</h3>
+                <ul>
+                    <li>✅ Automatic key generation</li>
+                    <li>✅ Rate limiting protection (5 req/hour)</li>
+                    <li>✅ 24-hour key expiration</li>
+                    <li>✅ HWID-based authentication</li>
+                    <li>✅ Replay attack prevention</li>
+                </ul>
+            </div>
         </div>
-
+        
         <div class="footer">
             <p>Powered by Vercel • Made for Roblox</p>
         </div>
@@ -144,10 +269,67 @@
         document.getElementById('getkey-url').textContent = baseUrl + '/api/getkey';
         document.getElementById('validate-url').textContent = baseUrl + '/api/validate';
         
-        function copyUrl(id) {
-            const text = document.getElementById(id).textContent;
-            navigator.clipboard.writeText(text);
-            alert('URL copied to clipboard!');
+        document.getElementById('keyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const result = document.getElementById('result');
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loader"></span>Generating...';
+            result.style.display = 'none';
+            
+            try {
+                const hwid = document.getElementById('hwid').value;
+                const player_id = parseInt(document.getElementById('player_id').value);
+                const username = document.getElementById('username').value;
+                
+                const response = await fetch(baseUrl + '/api/getkey', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        hwid: hwid,
+                        player_id: player_id,
+                        username: username,
+                        timestamp: Math.floor(Date.now() / 1000)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.key) {
+                    // Success
+                    result.className = 'result';
+                    result.querySelector('h3').textContent = '✅ Key Generated Successfully!';
+                    document.getElementById('keyDisplay').textContent = data.key;
+                    document.getElementById('expiresAt').textContent = new Date(data.expires_at).toLocaleString();
+                    document.getElementById('hwidDisplay').textContent = hwid;
+                    result.style.display = 'block';
+                } else {
+                    // Error
+                    result.className = 'result error';
+                    result.querySelector('h3').textContent = '❌ Error';
+                    document.getElementById('keyDisplay').textContent = data.error || 'Failed to generate key';
+                    result.style.display = 'block';
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.querySelector('h3').textContent = '❌ Error';
+                document.getElementById('keyDisplay').textContent = 'Network error: ' + error.message;
+                result.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Generate Key 🚀';
+            }
+        });
+        
+        function copyKey() {
+            const keyText = document.getElementById('keyDisplay').textContent;
+            navigator.clipboard.writeText(keyText);
+            alert('Key copied to clipboard! ✅');
         }
     </script>
 </body>
