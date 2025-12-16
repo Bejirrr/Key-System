@@ -246,9 +246,34 @@
                 });
                 
                 console.log('📥 Response status:', response.status);
+                console.log('📥 Response headers:', response.headers);
                 
-                const data = await response.json();
-                console.log('📊 Response data:', data);
+                // Get raw text first
+                const text = await response.text();
+                console.log('📥 Raw response:', text);
+
+                // Try to parse JSON
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('❌ Failed to parse JSON:', e);
+                    console.error('❌ Response text:', text);
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        ❌ Server Error - Invalid Response<br>
+                        <small>The server returned an invalid response</small><br>
+                        <details style="margin-top: 10px;">
+                            <summary style="cursor: pointer; color: #721c24; font-weight: bold;">📋 Technical Details (Click to expand)</summary>
+                            <pre style="font-size: 11px; overflow: auto; max-height: 200px; background: white; padding: 10px; border-radius: 5px; margin-top: 5px; text-align: left;">${text.substring(0, 500)}</pre>
+                        </details>
+                        <br>
+                        <small style="color: #999;">💡 Tip: Check Vercel deployment logs or browser console (F12) for more details</small>
+                    `;
+                    return;
+                }
+                
+                console.log('📊 Parsed data:', data);
                 
                 if (data.success && data.key) {
                     resultDiv.className = 'result success';
@@ -266,15 +291,21 @@
                         ❌ Failed to generate key<br>
                         <small>${data.message || 'Unknown error'}</small><br>
                         ${data.error ? `<small style="color: #999;">Debug: ${data.error}</small>` : ''}
+                        ${data.debug ? `<br><small style="color: #999;">Debug info: ${JSON.stringify(data.debug)}</small>` : ''}
                     `;
                 }
             } catch (error) {
-                console.error('❌ Error:', error);
+                console.error('❌ Network Error:', error);
                 resultDiv.className = 'result error';
                 resultDiv.innerHTML = `
                     ❌ Network Error<br>
                     <small>${error.message}</small><br>
-                    <small style="color: #999;">Check browser console (F12) for details</small>
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; color: #721c24; font-weight: bold;">📋 Error Details</summary>
+                        <pre style="font-size: 11px; overflow: auto; max-height: 200px; background: white; padding: 10px; border-radius: 5px; margin-top: 5px; text-align: left;">${error.stack || error.toString()}</pre>
+                    </details>
+                    <br>
+                    <small style="color: #999;">💡 Check browser console (F12) for more details</small>
                 `;
             }
         }
