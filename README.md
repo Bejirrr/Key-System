@@ -22,15 +22,13 @@ vercel env add SECRET_KEY
 
 ## 📁 Project Structure
 roblox-key-system/
-├── public/
-│   └── index.html          # Landing page
-├── api/
-│   ├── index.js            # API documentation endpoint
-│   ├── getkey.js           # Key generation endpoint
-│   └── validate.js         # Key validation endpoint
-├── vercel.json             # Vercel configuration
-├── package.json            # Dependencies
-└── .env                    # Environment variables
+- public/index.html          # Landing page
+- api/index.js            # API documentation endpoint
+- api/getkey.js           # Key generation endpoint
+- api/validate.js         # Key validation endpoint
+- vercel.json             # Vercel configuration
+- package.json            # Dependencies
+- .env                    # Environment variables
 
 ## 🔧 Configuration
 
