@@ -1,10 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Validate environment variables
+const SUPABASE_URL = process.env.SUPABASE_URL?.trim();
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY?.trim();
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('❌ Missing environment variables:', {
+    hasUrl: !!SUPABASE_URL,
+    hasKey: !!SUPABASE_KEY
+  });
+}
+
 // Initialize Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export default async function handler(req, res) {
   // CORS Headers
