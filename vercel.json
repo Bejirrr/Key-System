@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/getkey",
+      "dest": "/api/getkey.js"
+    },
+    {
+      "src": "/api/validate",
+      "dest": "/api/validate.js"
+    }
+  ],
+  "env": {
+    "SECRET_KEY": "@secret_key"
+  }
+}
