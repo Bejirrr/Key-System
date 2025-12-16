@@ -20,6 +20,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json');
   
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -29,6 +30,19 @@ export default async function handler(req, res) {
     return res.status(405).json({ 
       success: false, 
       message: 'Method not allowed' 
+    });
+  }
+
+  // Check environment variables first
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.error('❌ Environment variables missing!');
+    return res.status(500).json({
+      success: false,
+      message: 'Server configuration error',
+      debug: {
+        hasUrl: !!SUPABASE_URL,
+        hasKey: !!SUPABASE_KEY
+      }
     });
   }
 
