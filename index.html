@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Key System API</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #10b981;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        .endpoint {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        .endpoint h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .endpoint code {
+            background: #1f2937;
+            color: #10b981;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .method {
+            display: inline-block;
+            padding: 3px 10px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .info {
+            background: #dbeafe;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin: 5px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 Roblox Key System API</h1>
+        <span class="status">● Online</span>
+        
+        <div class="endpoint">
+            <h3><span class="method">POST</span>/api/getkey</h3>
+            <p>Generate atau retrieve key untuk HWID</p>
+            <p style="margin-top: 10px;"><strong>Endpoint:</strong> <code id="getkey-url"></code></p>
+        </div>
+
+        <div class="endpoint">
+            <h3><span class="method">POST</span>/api/validate</h3>
+            <p>Validasi key yang sudah ada</p>
+            <p style="margin-top: 10px;"><strong>Endpoint:</strong> <code id="validate-url"></code></p>
+        </div>
+
+        <div class="info">
+            <h3 style="margin-bottom: 10px;">📋 Features:</h3>
+            <ul>
+                <li>✅ Automatic key generation</li>
+                <li>✅ Rate limiting protection</li>
+                <li>✅ 24-hour key expiration</li>
+                <li>✅ HWID-based authentication</li>
+                <li>✅ Replay attack prevention</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>Powered by Vercel • Made for Roblox</p>
+            <p style="margin-top: 5px;">Check <a href="/api" style="color: #667eea;">/api</a> for API documentation</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-populate URLs
+        const baseUrl = window.location.origin;
+        document.getElementById('getkey-url').textContent = baseUrl + '/api/getkey';
+        document.getElementById('validate-url').textContent = baseUrl + '/api/validate';
+    </script>
+</body>
+</html>
