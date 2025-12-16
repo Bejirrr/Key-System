@@ -1,5 +1,8 @@
 {
-  "name": "roblox-key-system",
+  "name": "key-system-api",
   "version": "1.0.0",
-  "type": "module"
+  "description": "Key System API with Supabase",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  }
 }
