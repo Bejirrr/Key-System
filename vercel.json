@@ -1,24 +1,6 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
-    {
-      "src": "/",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/api",
-      "dest": "/api/index.js"
-    },
     {
       "src": "/api/getkey",
       "dest": "/api/getkey.js"
@@ -27,8 +9,5 @@
       "src": "/api/validate",
       "dest": "/api/validate.js"
     }
-  ],
-  "env": {
-    "SECRET_KEY": "testing"
-  }
+  ]
 }
