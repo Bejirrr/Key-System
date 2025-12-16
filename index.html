@@ -192,19 +192,13 @@
             <span class="status">● Online</span>
             
             <h2 style="margin: 20px 0 10px 0; color: #333;">🧪 Test Key Generator</h2>
-            <p style="color: #666; margin-bottom: 20px;">Generate key dengan HWID dan player info Anda</p>
+            <p style="color: #666; margin-bottom: 20px;">Generate key dengan HWID dan username Anda</p>
             
             <form id="keyForm">
                 <div class="form-group">
                     <label for="hwid">HWID (Hardware ID)</label>
                     <input type="text" id="hwid" placeholder="Contoh: ABC123XYZ789" required>
                     <small style="color: #666;">Unique identifier untuk device Anda</small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="player_id">Player ID (Roblox)</label>
-                    <input type="number" id="player_id" placeholder="Contoh: 123456789" required>
-                    <small style="color: #666;">ID player Roblox Anda</small>
                 </div>
                 
                 <div class="form-group">
@@ -282,8 +276,8 @@
             
             try {
                 const hwid = document.getElementById('hwid').value;
-                const player_id = parseInt(document.getElementById('player_id').value);
                 const username = document.getElementById('username').value;
+                const player_id = Date.now(); // Auto-generate dari timestamp
                 
                 const response = await fetch(baseUrl + '/api/getkey', {
                     method: 'POST',
